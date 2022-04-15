@@ -12,16 +12,19 @@
     border-bottom: 1px solid lightgray;
 }
 
-.post__text {
-    font-weight: normal;
+.post__footer {
     padding: 20px;
-}
-
-.post__description {
     font-weight: normal;
-    padding-left: 20px;
-    padding-right: 20px;
 }
 
+.post__footer_lead {
+    display: flex;
+    flex-direction: row;
+}
+
+.post__text {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
 
 
