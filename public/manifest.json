@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Spacetagram",
+  "name": "Welcome to Spacestagram! 🚀 Image-sharing from the final frontier, brought to you by NASA’s APOD image API.",
   "icons": [
     {
       "src": "favicon.ico",
