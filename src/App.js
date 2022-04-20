@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Post from "./Post";
+
+// import TextField from '@mui/material/TextField';
+// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import './App.css';
@@ -7,97 +13,107 @@ import './App.css';
 function App() {
 
   const [posts, setPosts] = useState([]);
-  const [loading,setLoading] = useState(true);
-  const [prevDate,setPrevDate] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [prevDate, setPrevDate] = useState(new Date());
 
-  const getPicturesOfTheDay = (date,prevDate) => {
+  const getPicturesOfTheDay = () => {
+    
+    setLoading(true);
+
+    let rawDate = prevDate;
+
+    //format date to YYYY-MM-DD format
+    let formattedDate = rawDate.toISOString().split('T')[0];
+    //go four days back (we want five posts per batch of images call)
+    rawDate.setDate(rawDate.getDate() - 4);
+    let formattedPrevDate = rawDate.toISOString().split('T')[0];
+
+    //set headers for request
       let requestOptions = {
         method: 'GET',
         redirect: 'follow'
       };
       
-      fetch("https://api.nasa.gov/planetary/apod?api_key=2qVz23V8TI2JlXzCHSns9e6C3E3psJMPxylS5EEJ&start_date="+prevDate+"&end_date="+date, requestOptions)
+      //run fetch reauest, than parse data
+      fetch("https://api.nasa.gov/planetary/apod?api_key=2qVz23V8TI2JlXzCHSns9e6C3E3psJMPxylS5EEJ&start_date="+formattedPrevDate+"&end_date="+formattedDate, requestOptions)
         .then(response => response.text())
         .then(results => {
           results = JSON.parse(results);
+          results.reverse();
           console.log(results);
-          let localPosts = posts;
+          let newPosts = posts;
+          var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
           
           results.forEach((result) => {
-            localPosts = [...localPosts, {
-              title: result["title"],
-              date: result["date"],
-              imageUrl: result["url"],
-              description: result["explanation"]
-            }]
+            if(!result["url"].includes("youtube")){
+              let rawDate = result["date"].split("-");
+              let date = months[ parseInt(rawDate[1])-1 ] + " "+ rawDate[2] + " "+ rawDate[0];
+              newPosts.push({
+                title: result["title"],
+                date: date,
+                imageUrl: result["url"],
+                description: result["explanation"]
+              });
+
+            }
           });
 
-          localPosts.reverse();
-          setPosts(localPosts);
+          console.log(posts);
+          setPosts(newPosts);
           setLoading(false);
+          console.log(loading);
+          //set one day prior, use as reference when getting new images (don't want to get same day again)
+          rawDate.setDate(rawDate.getDate() - 1);
+          console.log(rawDate);
+          setPrevDate(rawDate);
+
         })
         .catch(error => console.log('error', error));
+      
     }
 
-  useEffect(()=>{
+    const handleScroll = (e) => {
+      if( (e.target.documentElement.scrollTop + window.innerHeight + 1 >= e.target.documentElement.scrollHeight) ) getPicturesOfTheDay();
+    }
 
-    setLoading(true);
-    let rawDate;
-    let formattedDate;
+    useEffect(()=>{
+      console.log("first call");
+      getPicturesOfTheDay();
 
-    //if we havent set a date (first time on component) we set the date as todays date
-    if(prevDate === null) rawDate = new Date();
-    else rawDate = prevDate;
+      window.addEventListener("scroll", handleScroll);
+    },[]);
 
-    formattedDate = rawDate.toISOString().split('T')[0];
-    rawDate.setDate(rawDate.getDate() - 4);
-    let formattedPrevDate = rawDate.toISOString().split('T')[0];
-
-    getPicturesOfTheDay(formattedDate,formattedPrevDate);
-
-    //set one dy prior, use as reference when getting new images
-    rawDate.setDate(rawDate.getDate() - 1);
-    setPrevDate(rawDate);
-  },[]);
-
-  return (
-    <div className="app">
-      <div className="app__header">
-        <h2>Spacetagram</h2>
-      </div>
-
-      <div className="app__body">
-        <div className="app__welcome_posts_mobile">
-          <div className="app__welcome_section">
-            <h2>
-              Welcome 👋
-            </h2>
-            <p>
-              Welcome to Spacestagram! 🚀 Image-sharing from the final frontier, brought to you by NASA’s APOD image API.
-            </p>
-          </div>
-          <div>
-            <h2 className="app__post_heading">Posts</h2>
-            {loading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                  <CircularProgress />
-                </Box>
-              ):(
-                <>
-                  {
-                    posts.map((post,index) => (
-                      <Post key={index} title={post.title} date={post.date} imageUrl={post.imageUrl} description={post.description} />
-                    ))
-                  }
-                </>
-              )
-            }
-          </div>
+    return (
+      <div className="app">
+        <div className="app__header">
+          <h2 className="app__title">Spacetagram 🚀</h2>
+          <h6 className="app__title_secondary">Welcome to Spacestagram!  Image-sharing from the final frontier, brought to you by NASA’s APOD image API.</h6>
         </div>
-      </div>
 
-    </div>
-  );
+        <div className="app__body">
+
+          <div className="app__welcome_posts_mobile">
+            <div>
+              <h2 className="app__post_heading">Posts</h2>
+              {
+                posts.map((post,index) => (
+                  <div key={index} className="app__post-container">
+                    <Post  title={post.title} date={post.date} imageUrl={post.imageUrl} description={post.description} />
+                  </div>
+                ))
+              }
+              {loading && 
+                    <Box sx={{ width: "100%", display: 'flex', justifyContent: 'space-around' }}>
+                      <CircularProgress />
+                    </Box>
+              }
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    );
 }
 
 export default App;
