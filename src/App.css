@@ -31,7 +31,11 @@
   padding-right: 20px;
 }
 
-.app__post-container {
+.app__post_heading_container {
+  padding-bottom: 20px;
+}
+
+.app__post_container {
   width: 100%; 
   display: flex; 
   flex-direction: row; 

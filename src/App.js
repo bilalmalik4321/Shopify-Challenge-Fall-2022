@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Post from "./Post";
 
-// import TextField from '@mui/material/TextField';
-// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
@@ -14,16 +14,40 @@ function App() {
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currDate, setCurrDate] = useState(new Date());
   const [prevDate, setPrevDate] = useState(new Date());
 
-  const getPicturesOfTheDay = () => {
+  const removeDuplicates = (arr) => {
+    const uniqueDates = [];
+
+    const unique = arr.filter(element => {
+      const isDuplicate = uniqueDates.includes(element.date);
+    
+      if (!isDuplicate) {
+        uniqueDates.push(element.date);
+    
+        return true;
+      }
+    });
+
+    unique.sort(function(a,b){
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return new Date(b.date) - new Date(a.date);
+    });
+
+    return unique;
+  }
+
+  const getPicturesOfTheDay = (startDate, prevPosts) => {
     
     setLoading(true);
 
-    let rawDate = prevDate;
+    let rawDate = startDate;
 
     //format date to YYYY-MM-DD format
     let formattedDate = rawDate.toISOString().split('T')[0];
+    console.log(formattedDate);
     //go four days back (we want five posts per batch of images call)
     rawDate.setDate(rawDate.getDate() - 4);
     let formattedPrevDate = rawDate.toISOString().split('T')[0];
@@ -41,7 +65,7 @@ function App() {
           results = JSON.parse(results);
           results.reverse();
           console.log(results);
-          let newPosts = posts;
+          let newPosts = prevPosts;
           var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
           
           results.forEach((result) => {
@@ -58,7 +82,7 @@ function App() {
             }
           });
 
-          console.log(posts);
+          newPosts = removeDuplicates(newPosts);
           setPosts(newPosts);
           setLoading(false);
           console.log(loading);
@@ -73,15 +97,20 @@ function App() {
     }
 
     const handleScroll = (e) => {
-      if( (e.target.documentElement.scrollTop + window.innerHeight + 1 >= e.target.documentElement.scrollHeight) ) getPicturesOfTheDay();
+      if( (e.target.documentElement.scrollTop + window.innerHeight + 1 >= e.target.documentElement.scrollHeight) ) {
+        console.log(prevDate);
+        getPicturesOfTheDay(prevDate, posts);
+      }
     }
 
     useEffect(()=>{
       console.log("first call");
-      getPicturesOfTheDay();
+      getPicturesOfTheDay(prevDate, posts);
 
       window.addEventListener("scroll", handleScroll);
     },[]);
+
+    useEffect(()=>console.log(currDate),[currDate])
 
     return (
       <div className="app">
@@ -94,10 +123,31 @@ function App() {
 
           <div className="app__welcome_posts_mobile">
             <div>
-              <h2 className="app__post_heading">Posts</h2>
+              <div className="app__post_heading_container">
+
+                <h2 className="app__post_heading">Posts</h2>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DesktopDatePicker
+                    label="Images starting from"
+                    value={currDate}
+                    minDate={new Date('1995-06-16')}
+                    onChange={(newValue) => {
+                      console.log(newValue);
+                      setPrevDate(newValue);
+                      console.log(currDate);
+                      setCurrDate(newValue);
+                       console.log(currDate);
+                      setPosts([]);
+                      getPicturesOfTheDay(newValue, []);
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+
+              </div>
               {
                 posts.map((post,index) => (
-                  <div key={index} className="app__post-container">
+                  <div key={index} className="app__post_container">
                     <Post  title={post.title} date={post.date} imageUrl={post.imageUrl} description={post.description} />
                   </div>
                 ))
