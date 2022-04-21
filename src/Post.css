@@ -30,6 +30,10 @@
     flex-direction: row;
 }
 
-
+.post__link {
+    color: grey;
+    cursor: pointer; 
+    margin-top: 9px;
+}
 
 

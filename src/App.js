@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from './Home';
 import PostOfTheDay from './PostOfTheDay';
 
-import CircularProgress from '@mui/material/CircularProgress';
 import './App.css';
 
 function App() {

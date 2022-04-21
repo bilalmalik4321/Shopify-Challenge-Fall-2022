@@ -74,6 +74,7 @@ function Home() {
               let date = months[ parseInt(rawDate[1])-1 ] + " "+ rawDate[2] + " "+ rawDate[0];
               newPosts.push({
                 title: result["title"],
+                rawDate: result["date"],
                 date: date,
                 imageUrl: result["url"],
                 description: result["explanation"]
@@ -139,7 +140,7 @@ function Home() {
             {
             posts.map((post,index) => (
                 <div key={index} className="app__post_container">
-                <Post  title={post.title} date={post.date} imageUrl={post.imageUrl} description={post.description} />
+                <Post  title={post.title} date={post.date} imageUrl={post.imageUrl} description={post.description} rawDate={post.rawDate} />
                 </div>
             ))
             }
