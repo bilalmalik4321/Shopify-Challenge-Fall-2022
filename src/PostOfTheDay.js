@@ -5,15 +5,19 @@ import './postOfTheDay.css';
 
 const PostOfTheDay = () => {
 
+    //get date form route (/2022-04-21)
     const { date } = useParams();
     const [post, setPost] = useState({});
 
+    //function to get a single image from the POTD api
     const getPicturesOfTheDay = (date) => {
-        var requestOptions = {
+        // create headers
+        let requestOptions = {
             method: 'GET',
             redirect: 'follow'
           };
           
+          //use fetch request to get new post
           fetch("https://api.nasa.gov/planetary/apod?api_key=2qVz23V8TI2JlXzCHSns9e6C3E3psJMPxylS5EEJ&date="+date, requestOptions)
             .then(response => response.text())
             .then(result => {
@@ -37,6 +41,7 @@ const PostOfTheDay = () => {
 
 
     useEffect(()=>{
+        //on first render, get the pertaining image object to the specfific date
         getPicturesOfTheDay(date);
     },[])
 

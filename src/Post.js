@@ -6,7 +6,7 @@ import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import LinkIcon from '@mui/icons-material/Link';
 import './Post.css'
 
-function Post({imageUrl, title, date, description, rawDate}) {
+const Post = ({imageUrl, title, date, description, rawDate}) => {
   return (
     <div className="post">
         <div className="post__header_lead">

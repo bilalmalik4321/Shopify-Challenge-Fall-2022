@@ -9,7 +9,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
-function Home() {
+const Home = () => {
 
 
   const [posts, setPosts] = useState([]);
@@ -145,7 +145,7 @@ function Home() {
             ))
             }
             {loading && 
-                <Box sx={{ width: "100%", display: 'flex', justifyContent: 'space-around' }}>
+                <Box sx={{ width: "100%", display: 'flex', justifyContent: 'space-around', paddingBottom: 100 }}>
                     <CircularProgress />
                 </Box>
             }
