@@ -25,7 +25,7 @@ const Post = ({imageUrl, title, date, description, rawDate}) => {
                     name="checkedH" />}
                 />
                 <div title="get link by pressing" alt="get link by pressing">
-                    <LinkIcon className="post__link" onClick={() => {navigator.clipboard.writeText("http://localhost:3000/"+rawDate)}}/>
+                    <LinkIcon className="post__link" onClick={() => {navigator.clipboard.writeText("https://graceful-kringle-54a804.netlify.app/"+rawDate)}}/>
                 </div>
             </div>
             <p className="post__description">{description}</p>

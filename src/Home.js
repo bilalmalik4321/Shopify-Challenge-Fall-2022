@@ -59,7 +59,7 @@ const Home = () => {
       };
       
       //run fetch reauest, than parse data
-      fetch("https://api.nasa.gov/planetary/apod?api_key=2qVz23V8TI2JlXzCHSns9e6C3E3psJMPxylS5EEJ&start_date="+formattedPrevDate+"&end_date="+formattedDate, requestOptions)
+      fetch("https://api.nasa.gov/planetary/apod?api_key="+process.env.REACT_APP_NASA_API_KEY+"&start_date="+formattedPrevDate+"&end_date="+formattedDate, requestOptions)
         .then(response => response.text())
         .then(results => {
           results = JSON.parse(results);

@@ -18,7 +18,7 @@ const PostOfTheDay = () => {
           };
           
           //use fetch request to get new post
-          fetch("https://api.nasa.gov/planetary/apod?api_key=2qVz23V8TI2JlXzCHSns9e6C3E3psJMPxylS5EEJ&date="+date, requestOptions)
+          fetch("https://api.nasa.gov/planetary/apod?api_key="+process.env.REACT_APP_NASA_API_KEY+"&date="+date, requestOptions)
             .then(response => response.text())
             .then(result => {
                 result = JSON.parse(result);

@@ -4,7 +4,7 @@
 
 A webpage that pulls images using the NASA's "Picture of The Day" API and allows the user to 'like' and 'unlike' their favourite images\
 My application for Shopify's Summer 2022 Frontend Developer Intern position\
-Live demo: https://aloinn.github.io/Spacestagram-page/#/
+Live demo: https://graceful-kringle-54a804.netlify.app
 
 ## &#129680; Features
 
